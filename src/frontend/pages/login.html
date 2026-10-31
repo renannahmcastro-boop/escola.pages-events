@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar — CEPK Eventos</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="manifest" href="/pwa/manifest.webmanifest">
+</head>
+<body>
+  <aside class="lateral" aria-label="Navegação principal">
+    <a class="marca" href="/">CEPK Eventos<small>Colégio Estadual Presidente Kennedy</small></a>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/turma.html">Turmas</a>
+      <a href="/inscricoes.html">Minhas inscrições</a>
+      <a href="/sobre.html">Sobre</a>
+    </nav>
+    <div class="area-sessao" id="areaSessao"></div>
+  </aside>
+
+  <main class="container">
+    <article class="detalhe-evento">
+      <h2>Entrar</h2>
+
+      <p id="sessaoAtiva" hidden>Você já tem sessão iniciada — <a href="/turma.html">ir para Turmas</a>.</p>
+
+      <!-- Login REAL: as credenciais são verificadas pelo SERVIDOR
+           (GET confirma a sessão por cookie HttpOnly; nunca no navegador). -->
+      <form class="form-login" id="formEntrar">
+        <label for="campoEmail">E-mail institucional</label>
+        <input id="campoEmail" name="email" type="email" autocomplete="email"
+               placeholder="ex.: nome@escola.pr.gov.br" required>
+        <label for="campoSenha">Senha</label>
+        <input id="campoSenha" name="senha" type="password" autocomplete="current-password" required>
+        <button class="primario" type="submit">Entrar</button>
+        <p class="aviso" id="mensagem" role="alert" hidden></p>
+      </form>
+
+      <!-- Contas de demonstração: e-mails de teste (domínio .test) e senha
+           inicial definida no ambiente local do responsável — NUNCA no site. -->
+      <h3>Contas de demonstração <small>(apenas para testes locais)</small></h3>
+      <p>Estas contas são fictícias e servem para demonstrar os perfis do sistema.
+         A senha inicial de todas está definida no arquivo local do servidor
+         (não circula pelo site); troque-a antes de qualquer uso real.</p>
+      <ul class="lista-contas-demo">
+        <li><code>aluno1@cepk-eventos.test</code> — Aluno Demo 1, turma 1º A</li>
+        <li><code>aluno2@cepk-eventos.test</code> — Aluno Demo 2, turma 1º B</li>
+        <li><code>prof.geografia@cepk-eventos.test</code> — Professora de Geografia (1º A, 1º B, 1º C)</li>
+        <li><code>pedagoga1@cepk-eventos.test</code> — Pedagoga 1 (10 turmas)</li>
+        <li><code>diretora@cepk-eventos.test</code> — Diretora (todas as turmas)</li>
+      </ul>
+
+      <p class="aviso">Tentativas excessivas de acesso são bloqueadas por alguns
+         minutos (proteção padrão de sistemas profissionais).</p>
+      <p>O login institucional da escola (@escola.pr.gov.br) continua em
+         construção e vai substituir estas contas de teste quando estiver pronto.</p>
+    </article>
+    <a class="voltar" href="/">← Voltar ao início</a>
+  </main>
+
+  <nav class="navegacao-inferior" aria-label="Navegação inferior (celular)">
+    <a href="/"><strong>⌂</strong>Início</a>
+    <a href="/turma.html"><strong>☰</strong>Turmas</a>
+    <a href="/inscricoes.html"><strong>✓</strong>Inscrições</a>
+    <a href="/sobre.html"><strong>ℹ</strong>Sobre</a>
+  </nav>
+
+  <div class="faixa-sessao" id="faixaSessao"><span>Sessão</span></div>
+
+  <footer class="rodape">CEPK Eventos — protótipo (redesign 2026-10-28).</footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var form = document.getElementById('formEntrar');
+      var mensagem = document.getElementById('mensagem');
+      var botao = form.querySelector('button[type="submit"]');
+
+      form.addEventListener('submit', async function (evento) {
+        evento.preventDefault(); // nada sai daqui sem passar pelo servidor
+        mensagem.hidden = true;
+        botao.disabled = true;
+        try {
+          var resposta = await fetch('/api/v1/auth/entrar', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: document.getElementById('campoEmail').value,
+              senha: document.getElementById('campoSenha').value,
+            }),
+          });
+          if (resposta.ok) {
+            location.href = '/turma.html'; // direciona ao próprio perfil
+            return;
+          }
+          var dados = null;
+          try { dados = await resposta.json(); } catch { /* corpo vazio */ }
+          if (resposta.status === 429) {
+            mensagem.textContent = (dados && dados.erro && dados.erro.mensagem) ||
+              'Muitas tentativas. Aguarde alguns minutos e tente de novo.';
+          } else if (resposta.status === 401) {
+            mensagem.textContent = 'E-mail ou senha incorretos.';
+          } else {
+            mensagem.textContent = 'Não foi possível entrar. Tente de novo em instantes.';
+          }
+          mensagem.hidden = false;
+        } catch {
+          // Sem rede: NUNCA se confirma login por conta própria (regra 9 do AGENTS)
+          mensagem.textContent = 'Sem conexão: entre novamente quando a rede estiver disponível.';
+          mensagem.hidden = false;
+        } finally {
+          document.getElementById('campoSenha').value = '';
+          botao.disabled = false;
+        }
+      });
+
+      if (window.CEPKSessao) {
+        window.CEPKSessao.consultar().then(function (usuario) {
+          if (usuario) document.getElementById('sessaoAtiva').hidden = false;
+        });
+      }
+    });
+  </script>
+  <script defer src="/js/sessao.js"></script>
+  <script defer src="/js/offline.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sobre — CEPK Eventos</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="manifest" href="/pwa/manifest.webmanifest">
+</head>
+<body>
+  <aside class="lateral" aria-label="Navegação principal">
+    <a class="marca" href="/">CEPK Eventos<small>Colégio Estadual Presidente Kennedy</small></a>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/turma.html">Turmas</a>
+      <a href="/inscricoes.html">Minhas inscrições</a>
+      <a href="/sobre.html" aria-current="page">Sobre</a>
+    </nav>
+    <div class="area-sessao" id="areaSessao"></div>
+  </aside>
+
+  <main class="container">
+    <h2>Sobre o CEPK Eventos</h2>
+    <article class="detalhe-evento">
+      <p>O <strong>CEPK Eventos</strong> é uma aplicação web (PWA) para centralizar
+         os eventos do Colégio Estadual Presidente Kennedy: calendário geral,
+         eventos por turma e inscrições com vagas e prazo.</p>
+      <h3>Como funciona</h3>
+      <ul>
+        <li>Alunos visualizam os eventos gerais e os da própria turma.</li>
+        <li>Somente professores explicitamente autorizados e a administração
+            publicam, editam ou cancelam eventos.</li>
+        <li>As inscrições respeitam limite de vagas e prazo, e só ficam
+            confirmadas quando o próprio servidor confirma.</li>
+        <li>Funciona offline apenas para consulta (leitura) — nenhuma ação
+            é registrada remotamente sem conexão.</li>
+      </ul>
+      <h3>Status do projeto</h3>
+      <p>Versão em desenvolvimento: as telas atuais usam dados fictícios de
+         demonstração. Dados reais da escola, contas institucionais e
+         publicação online fazem parte das etapas seguintes do plano.</p>
+      <p><strong>Importante:</strong> nesta versão nenhum nome, documento ou contato
+         real de pessoas da escola é usado.</p>
+    </article>
+    <a class="voltar" href="/">← Voltar ao início</a>
+  </main>
+
+  <nav class="navegacao-inferior" aria-label="Navegação inferior (celular)">
+    <a href="/"><strong>⌂</strong>Início</a>
+    <a href="/turma.html"><strong>☰</strong>Turmas</a>
+    <a href="/inscricoes.html"><strong>✓</strong>Inscrições</a>
+    <a href="/sobre.html" aria-current="page"><strong>ℹ</strong>Sobre</a>
+  </nav>
+
+  <div class="faixa-sessao" id="faixaSessao"><span>Sessão de demonstração</span></div>
+
+  <footer class="rodape">CEPK Eventos — protótipo visual (redesign 2026-10-28).</footer>
+
+  <script defer src="/js/sessao.js"></script>
+  <script defer src="/js/offline.js"></script>
+</body>
+</html>
